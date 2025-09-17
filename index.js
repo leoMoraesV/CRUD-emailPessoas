@@ -1,6 +1,25 @@
 import { input, select } from '@inquirer/prompts';
 import CrudAPI from "./CrudAPI.js";
 
+async function pesquisarPorNome() {
+    const inicio = await input({ message: "Digite o texto para pesquisa por nome:" });
+
+    const todos = await CrudAPI.lerTodos();
+
+    const filtrados = todos.filter(pessoa =>
+        pessoa.nome.toLowerCase().startsWith(inicio.toLowerCase())
+    );
+
+    if (filtrados.length === 0) {
+        console.log("Nenhum registro encontrado com o termo digitado.");
+        return;
+    }
+
+    filtrados.forEach(pessoa => {
+        console.log(`${pessoa.id} - ${pessoa.nome} - ${pessoa.email}`);
+    });
+}
+
 async function listarTodosMaiusculo() {
     const todos = await CrudAPI.lerTodos();
 
@@ -150,7 +169,8 @@ while(opcao != "sair"){
         { name: '5 - Excluir registro', value: 'excluir' },
         { name: '6 - Colocar nome em maiúscula', value: 'maiuscula' },
         { name: '7 - Exibir sobrenome primeiro', value: 'sobrenome'},
-        { name: '8 - Sair', value: 'sair'}
+        { name: '8 - Pesquisa por nome', value: 'pesquisarInicio' },
+        { name: '9 - Sair', value: 'sair'}
     ]
     });
 
@@ -183,6 +203,10 @@ while(opcao != "sair"){
         case "sobrenome":
         await listarTodosSobrenome();
         break;       
+
+        case "pesquisarInicio":
+        await pesquisarPorNome();
+        break;
     }
 }
 console.log(opcao);
